@@ -55,15 +55,13 @@ vsce package
 
 ### Embedding
 
-Open VSCode, use <kbd>Ctrl+Shift+P</kbd> to open command panel and write
-<kbd>Extensions: Install from VSIX...</kbd>
+Open VSCode, use <kbd>Ctrl+Shift+P</kbd> to open command panel and write `Extensions: Install from VSIX...`
 Choose the generated file
 
 ## Usage
 
-At this point, ucohi will autostart on opening source code file inside the project
-If you wanna manually run inspection, use <kbd>Ctrl+Shift+P</kbd> and type
-Find Dead C++ Functions
+At this point, ucohi will autostart on opening source code file inside the project.
+If you wanna manually run inspection, use <kbd>Ctrl+Shift+P</kbd> and type `Find Dead C++ Functions`
 
 ## Supported languages
 
