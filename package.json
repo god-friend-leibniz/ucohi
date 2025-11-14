@@ -1,0 +1,33 @@
+{
+  "name": "cpp-dead-function-finder",
+  "displayName": "C++ Dead Function Finder",
+  "description": "Finds and highlights functions that are defined but never called anywhere in the project",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:cpp"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "cpp-dead-function-finder.findDeadFunctions",
+        "title": "Find Dead C++ Functions"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.11.9",
+    "typescript": "^4.9.4"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log*
+.DS_Store
+
+.vscode/*.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+out/
+*.vsix
+
+*.log
