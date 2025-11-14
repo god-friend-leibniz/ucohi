@@ -3,13 +3,19 @@
 ## Table of content
 
 - [Introduction](#introduction)
+- [Supported languages](#supported-languages)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Supported languages](#supported-languages)
 
 ## Introduction
 
 ucohi is a VSCode plugin that highlights all functions that are defined but never called in your code
+
+## Supported languages
+
+At this point, ucohi is able to inspect
+
+- C/C++
 
 ## Installation
 
@@ -62,9 +68,3 @@ Choose the generated file
 
 At this point, ucohi will autostart on opening source code file inside the project.
 If you wanna manually run inspection, use <kbd>Ctrl+Shift+P</kbd> and type `Find Dead C++ Functions`
-
-## Supported languages
-
-At this point, ucohi is able to inspect
-
-- C/C++

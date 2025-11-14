@@ -13,6 +13,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   let timeout: NodeJS.Timeout | undefined = undefined;
 
+  function stripComments(text: string): string {
+    text = text.replace(/\/\*[\s\S]*?\*\//g, "");
+    text = text.replace(/\/\/.*$/gm, "");
+    return text;
+  }
+
   async function findDeadFunctions() {
     const editor = vscode.window.activeTextEditor;
     if (
@@ -51,7 +57,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     for (const file of files) {
-      const content = fs.readFileSync(file, "utf8");
+      let content = fs.readFileSync(file, "utf8");
+
+      content = stripComments(content);
+
       for (const funcName of functionsToCheck) {
         const regex = new RegExp(`\\b${funcName}\\s*\\(`, "g");
         const matches = content.match(regex);
