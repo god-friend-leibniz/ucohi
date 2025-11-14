@@ -33,10 +33,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const projectRoot = workspaceFolder.uri.fsPath;
 
-    // Ищем все .cpp и .h файлы в проекте
     const files = await findFiles(projectRoot, ["*.cpp", "*.h"]);
 
-    // Собираем все функции из текущего файла
     const currentText = editor.document.getText();
     const definedFunctions = extractFunctionNames(currentText);
 
@@ -45,10 +43,8 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    // Исключаем `main` из проверки
     const functionsToCheck = definedFunctions.filter((name) => name !== "main");
 
-    // Считаем, сколько раз **вызывается** каждая функция (имя + `(`)
     const callCount: Map<string, number> = new Map();
     for (const funcName of functionsToCheck) {
       callCount.set(funcName, 0);
@@ -57,23 +53,19 @@ export function activate(context: vscode.ExtensionContext) {
     for (const file of files) {
       const content = fs.readFileSync(file, "utf8");
       for (const funcName of functionsToCheck) {
-        // Ищем: `funcName(` — это вызов функции (с учётом пробелов)
         const regex = new RegExp(`\\b${funcName}\\s*\\(`, "g");
         const matches = content.match(regex);
         if (matches) {
-          // Подсчитываем количество совпадений
           let count = matches.length;
 
-          // Если это текущий файл — исключаем **определение функции**
           if (file === editor.document.uri.fsPath) {
-            // Ищем определение: `funcName(...){`
             const defRegex = new RegExp(
               `\\b${funcName}\\s*\\([^)]*\\)\\s*\\{`,
               "g",
             );
             const defMatches = content.match(defRegex);
             if (defMatches) {
-              count -= defMatches.length; // вычитаем определения
+              count -= defMatches.length;
             }
           }
 
@@ -84,13 +76,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
 
-    // Функция считается "мертвой", если она **никогда не вызывается**
     const deadRanges: vscode.Range[] = [];
 
     for (const funcName of functionsToCheck) {
       const count = callCount.get(funcName) || 0;
       if (count === 0) {
-        // функция нигде не вызывается
         const range = findFunctionRange(editor.document, funcName);
         if (range) {
           deadRanges.push(range);
@@ -104,7 +94,6 @@ export function activate(context: vscode.ExtensionContext) {
     editor.setDecorations(decorationType, deadRanges);
   }
 
-  // Ищет все файлы с расширениями в директории
   async function findFiles(dir: string, patterns: string[]): Promise<string[]> {
     const result: string[] = [];
     const items = await fs.promises.readdir(dir, { withFileTypes: true });
@@ -121,23 +110,20 @@ export function activate(context: vscode.ExtensionContext) {
     return result;
   }
 
-  // Извлекает имена функций из текста
   function extractFunctionNames(text: string): string[] {
     const lines = text.split("\n");
     const functions: string[] = [];
 
     for (const line of lines) {
-      // Ищем: `returnType name(` или `name(` в начале строки
       const match = line.match(/^\s*(?:\w+\s+)?(\w+)\s*\([^)]*\)\s*\{/);
       if (match) {
         functions.push(match[1]);
       }
     }
 
-    return [...new Set(functions)]; // уникальные
+    return [...new Set(functions)];
   }
 
-  // Находит позицию определения функции в документе
   function findFunctionRange(
     document: vscode.TextDocument,
     funcName: string,
@@ -161,7 +147,6 @@ export function activate(context: vscode.ExtensionContext) {
     return null;
   }
 
-  // Событие при изменении текста
   vscode.workspace.onDidChangeTextDocument(
     (event) => {
       if (
@@ -176,7 +161,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions,
   );
 
-  // При открытии/переключении редактора
   vscode.window.onDidChangeActiveTextEditor(
     (editor) => {
       if (
@@ -191,7 +175,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions,
   );
 
-  // Запускаем сразу при открытии
   if (
     vscode.window.activeTextEditor &&
     (vscode.window.activeTextEditor.document.languageId === "cpp" ||
@@ -200,7 +183,6 @@ export function activate(context: vscode.ExtensionContext) {
     findDeadFunctions();
   }
 
-  // Регистрируем команду
   let disposable = vscode.commands.registerCommand(
     "cpp-dead-function-finder.findDeadFunctions",
     findDeadFunctions,
